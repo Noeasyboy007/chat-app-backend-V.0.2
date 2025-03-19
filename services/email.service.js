@@ -21,13 +21,13 @@ export const sendVerificationEmail = async (email, verificationToken) => {
     }
 };
 
-export const sendWelcomeEmail = async (email, name) => {
+export const sendWelcomeEmail = async (email, name, loginURL) => {
     try {
         await transporter.sendMail({
             from: emailConfig.from,
             to: email,
             subject: "Welcome to Chat App",
-            html: WELCOME_EMAIL_TEMPLATE.replace("{name}", name)
+            html: WELCOME_EMAIL_TEMPLATE.replace("{name}", name).replace("{loginURL}", loginURL)
         });
         console.log("Welcome email sent successfully");
     } catch (error) {

@@ -104,7 +104,7 @@ export const verifyEmail = async (req, res) => {
 		await user.save();
 
 		// Send Welcome email notification to signup user
-		await sendWelcomeEmail(user.email, user.name)
+		await sendWelcomeEmail(user.email, `${user.first_name} ${user.last_name}`, `${process.env.FRONTEND_URL}/login`);
 
 		// For response Messege Code
 		res.status(200).json({ success: true, message: "Email Verification successful" });
@@ -247,5 +247,48 @@ export const logout = (req, res) => {
 	} catch (error) {
 		console.log("Error in logout controller", error.message);
 		res.status(500).json({ error: "Internal Server Error" });
+	}
+};
+
+// RESEND OTP CONTROLLER
+export const resendOtp = async (req, res) => {
+	try {
+		const { email } = req.body;
+
+		if (!email) {
+			return res.status(400).json({ success: false, message: "Email is required" });
+		}
+
+		// Find user by email
+		const user = await User.findOne({ email });
+
+		if (!user) {
+			return res.status(404).json({ success: false, message: "User not found" });
+		}
+
+		if (user.isVerified) {
+			return res.status(400).json({ success: false, message: "Email is already verified" });
+		}
+
+		// Generate new verification token
+		const verificationToken = generateVerificationToken();
+		
+		// Update user with new token and expiration
+		user.verificationToken = verificationToken;
+		user.verificationTokenExpiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+		
+		await user.save();
+
+		// Send verification email
+		await sendVerificationEmail(user.email, verificationToken);
+
+		res.status(200).json({
+			success: true,
+			message: "Verification code has been resent to your email"
+		});
+
+	} catch (error) {
+		console.log("Error in resend OTP: " + error.message);
+		res.status(500).json({ success: false, message: error.message });
 	}
 };
