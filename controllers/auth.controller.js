@@ -4,6 +4,8 @@ import User from "../models/user.model.js";
 import { generateTokenAndSetCookie } from "../utils/generateToken.js";
 import { generateVerificationToken } from "../utils/generateVerificationToken.js";
 import { sendVerificationEmail, sendWelcomeEmail, sendResetPasswordEmail, sendPasswordResetSuccessEmail } from '../services/email.service.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // SIGNUP CONTROLLER
 export const signup = async (req, res) => {
@@ -177,7 +179,7 @@ export const forgotPassword = async (req, res) => {
 		await user.save();
 
 		// Send Reset password link with token in email notification to user
-		await sendResetPasswordEmail(user.email, `${process.env.CLIENT_URL}/resetPassword/${resetToken}`);
+		await sendResetPasswordEmail(user.email, `${process.env.FRONTEND_URL}/resetPassword/${resetToken}`);
 
 		// For response Messege Code
 		res.status(200).json({ success: true, message: "Reset Password link sent to your email" });
