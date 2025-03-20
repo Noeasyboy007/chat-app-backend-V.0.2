@@ -5,20 +5,17 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-
 const app = express();
-
 const server = http.createServer(app);
-console.log("CORS configuration:", {
-	origin: process.env.FRONTEND_URL,
-});
 
+// Improved CORS configuration for Socket.io
 const io = new Server(server, {
 	cors: {
-		origin: [process.env.FRONTEND_URL],
-		// origin: ["http://localhost:3000"],
+		// Accept requests from any origin or specify your Vercel domain
+		origin: process.env.FRONTEND_URL || "*",
 		methods: ["GET", "POST"],
-		credentials: true
+		credentials: true,
+		allowedHeaders: ["Content-Type", "Authorization"]
 	},
 });
 

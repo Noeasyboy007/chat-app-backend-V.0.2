@@ -17,13 +17,17 @@ dotenv.config();
 const __dirname = path.resolve();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS
+// Improved CORS configuration
 app.use(cors({
-	origin: process.env.FRONTEND_URL || "http://localhost:3000", // Specific origin
- 	credentials: true, // Allow credentials (cookies, auth headers)
- 	methods: ["GET", "POST", "PUT", "DELETE"],
- 	allowedHeaders: ["Content-Type", "Authorization"]
+	// Allow requests from your Vercel domain or any origin during development
+	origin: process.env.FRONTEND_URL || "*",
+	credentials: true,
+	methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+	allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 app.use(express.json());
 app.use(cookieParser());
@@ -32,10 +36,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 
-app.use(express.static(path.join(__dirname, "/frontend/dist")));
+// app.use(express.static(path.join(__dirname, "/frontend/dist")))
 
-app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+// app.get("*", (req, res) => {
+// 	res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"))
+// })
+
+app.get("/", (req, res) => {
+	res.json({ message: "Chat API is running" });
 });
 
 server.listen(PORT, () => {
