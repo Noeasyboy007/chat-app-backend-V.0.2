@@ -6,18 +6,21 @@ const protectRoute = async (req, res, next) => {
 		const token = req.cookies.jwt;
 
 		if (!token) {
+			console.log("No token found in cookies");
 			return res.status(401).json({ error: "Unauthorized - No Token Provided" });
 		}
 
 		const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
 		if (!decoded) {
+			console.log("Invalid token");
 			return res.status(401).json({ error: "Unauthorized - Invalid Token" });
 		}
 
 		const user = await User.findById(decoded.userId).select("-password");
 
 		if (!user) {
+			console.log("User not found");
 			return res.status(404).json({ error: "User not found" });
 		}
 
@@ -26,7 +29,7 @@ const protectRoute = async (req, res, next) => {
 		next();
 	} catch (error) {
 		console.log("Error in protectRoute middleware: ", error.message);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(401).json({ error: "Unauthorized - Invalid Token" });
 	}
 };
 
