@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import colors from "colors";
 import cors from "cors"; // Import cors
-import path from "path";
 
 import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
@@ -49,17 +48,6 @@ app.get("/api/test-cors", (req, res) => {
 // Health check route
 app.get("/api/health", (req, res) => {
 	res.json({ message: "Chat API is running" });
-});
-
-// Static file serving - ONLY needed if you're building the frontend into the backend's dist folder
-// If your frontend is on Vercel, comment out this section
-const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, "dist")));
-
-// Wildcard route to serve React app
-// If your frontend is on Vercel, comment out this section
-app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 server.listen(PORT, () => {

@@ -8,21 +8,12 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// Improved CORS configuration for Socket.io
-// const io = new Server(server, {
-// 	cors: {
-// 		// Accept requests from any origin or specify your Vercel domain
-// 		origin: process.env.FRONTEND_URL || "*",
-// 		methods: ["GET", "POST"],
-// 		credentials: true,
-// 		allowedHeaders: ["Content-Type", "Authorization"]
-// 	},
-// });
-
 const io = new Server(server, {
 	cors: {
-		origin: ["http://localhost:3000"],
+		origin: process.env.FRONTEND_URL || "*",
 		methods: ["GET", "POST", "PUT", "DELETE"],
+		allowedHeaders: ["Content-Type", "Authorization"],
+		credentials: true
 	},
 });
 
