@@ -10,7 +10,9 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
 	cors: {
-		origin: true, // Allow all origins during development
+		origin: process.env.NODE_ENV === 'production' 
+			? [process.env.FRONTEND_URL, 'https://chat-app-ten-ecru-98.vercel.app'] 
+			: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		allowedHeaders: ["Content-Type", "Authorization"],
 		credentials: true
